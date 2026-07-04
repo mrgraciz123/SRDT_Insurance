@@ -251,7 +251,7 @@ def inject_css():
         .glass-card:hover {{
             transform: translateY(-3px);
             border-color: {primary_color}44;
-            box-shadow: 0 12px 40px 0 {shadow_color};
+            box-shadow: 0 12px 40px 0 var(--btn-shadow);
         }}
         
         /* Hero Section style */

@@ -644,6 +644,49 @@ def inject_css():
 
 inject_css()
 
+# Helper function to generate circular gauge SVG
+def draw_svg_gauge(probability, gauge_color, text_color, border_color):
+    percent = probability * 100
+    size = 120
+    radius = 50
+    center = size / 2
+    circumference = 2 * math.pi * radius
+    stroke_dashoffset = circumference - (probability * circumference)
+    
+    svg = f"""
+    <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 130px; margin-top: 0.5rem;">
+        <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}" style="transform: rotate(-90deg);">
+            <!-- Background circle -->
+            <circle 
+                cx="{center}" 
+                cy="{center}" 
+                r="{radius}" 
+                fill="none" 
+                stroke="{border_color}" 
+                stroke-width="8"
+            />
+            <!-- Progress circle -->
+            <circle 
+                cx="{center}" 
+                cy="{center}" 
+                r="{radius}" 
+                fill="none" 
+                stroke="{gauge_color}" 
+                stroke-width="8"
+                stroke-dasharray="{circumference}"
+                stroke-dashoffset="{stroke_dashoffset}"
+                stroke-linecap="round"
+                style="transition: stroke-dashoffset 0.5s ease-in-out;"
+            />
+        </svg>
+        <div style="position: absolute; text-align: center; color: {text_color}; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <span style="font-size: 1.4rem; font-weight: 800; color: {text_color}; line-height: 1.1;">{percent:.1f}%</span>
+            <span style="font-size: 0.65rem; font-weight: 600; color: {text_color}; opacity: 0.7; letter-spacing: 0.05em; margin-top: 2px;">PROBABILITY</span>
+        </div>
+    </div>
+    """
+    return svg
+
 # Helper function to generate PDF
 def generate_pdf_report(age, prediction_label, prob_buy, prob_not_buy, confidence, explanation):
     from fpdf import FPDF

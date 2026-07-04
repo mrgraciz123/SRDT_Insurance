@@ -97,45 +97,75 @@ page = st.sidebar.radio(
     ]
 )
 
-# Set CSS theme variables based on state
+# Centralized theme configuration with variables instead of hardcoded colors
 if st.session_state['theme'] == 'Light':
-    bg_color = "#f8fafc"
-    card_bg = "rgba(255, 255, 255, 0.72)"
-    text_color = "#0f172a"
-    subtext_color = "#475569"
-    border_color = "rgba(255, 255, 255, 0.6)"
-    shadow_color = "rgba(31, 38, 135, 0.05)"
-    sidebar_bg = "#ffffff"
-    primary_color = "#2563eb" # Royal Blue
-    accent_gradient = "linear-gradient(135deg, #2563eb, #06b6d4)" # Royal Blue to Cyan Gradient
-    plotly_template = "plotly_white"
-    
-    # Enhanced glassmorphism properties
+    theme_vars = {
+        "primary": "#2563EB",
+        "accent": "#3B82F6",
+        "bg": "#F8FAFC",
+        "card": "#FFFFFF",
+        "sidebar": "#FFFFFF",
+        "text_primary": "#111827",
+        "text_secondary": "#6B7280",
+        "border": "#E5E7EB",
+        "hover": "#F3F4F6",
+        "btn_gradient": "linear-gradient(135deg, #2563EB, #3B82F6)",
+        "btn_shadow": "rgba(37, 99, 235, 0.15)",
+        "card_shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
+        "card_blur": "blur(0px)",
+        "plotly_template": "plotly_white",
+        "grid_color": "#F3F4F6",
+        "success": "#10B981",
+        "danger": "#EF4444",
+        "warning": "#F59E0B"
+    }
+else:
+    theme_vars = {
+        "primary": "#60A5FA",
+        "accent": "#3B82F6",
+        "bg": "#0F172A",
+        "card": "rgba(30, 41, 59, 0.75)", # Glassmorphic dark card
+        "sidebar": "#111827",
+        "text_primary": "#F8FAFC",
+        "text_secondary": "#CBD5E1",
+        "border": "#334155",
+        "hover": "#273549",
+        "btn_gradient": "linear-gradient(135deg, #3B82F6, #60A5FA)",
+        "btn_shadow": "rgba(96, 165, 250, 0.25)",
+        "card_shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2)",
+        "card_blur": "blur(12px)",
+        "plotly_template": "plotly_dark",
+        "grid_color": "#1E293B",
+        "success": "#34D399",
+        "danger": "#F87171",
+        "warning": "#FBBF24"
+    }
+
+# Mapping global variables
+primary_color = theme_vars['primary']
+subtext_color = theme_vars['text_secondary']
+border_color = theme_vars['border']
+card_bg = theme_vars['card']
+text_color = theme_vars['text_primary']
+bg_color = theme_vars['bg']
+sidebar_bg = theme_vars['sidebar']
+accent_gradient = theme_vars['btn_gradient']
+plotly_template = theme_vars['plotly_template']
+success_color = theme_vars['success']
+danger_color = theme_vars['danger']
+warning_color = theme_vars['warning']
+hover_color = theme_vars['hover']
+btn_shadow = theme_vars['btn_shadow']
+card_shadow = theme_vars['card_shadow']
+card_blur = theme_vars['card_blur']
+grid_col = theme_vars['grid_color']
+
+if st.session_state['theme'] == 'Light':
     bg_style = "radial-gradient(at 0% 0%, rgba(244, 247, 254, 1) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(224, 231, 255, 0.6) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(207, 250, 254, 0.5) 0%, transparent 50%), #f8fafc"
     sidebar_bg_style = "rgba(255, 255, 255, 0.45)"
-    card_shadow = "0 8px 32px 0 rgba(31, 38, 135, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.6)"
-    input_bg = "rgba(255, 255, 255, 0.65)"
-    input_border = "rgba(226, 232, 240, 0.9)"
-    slider_track = "rgba(226, 232, 240, 0.8)"
 else:
-    bg_color = "#090d16"
-    card_bg = "rgba(15, 23, 42, 0.65)"
-    text_color = "#f8fafc"
-    subtext_color = "#94a3b8"
-    border_color = "rgba(255, 255, 255, 0.08)"
-    shadow_color = "rgba(0, 0, 0, 0.4)"
-    sidebar_bg = "#0d1527"
-    primary_color = "#3b82f6" # Brighter Blue
-    accent_gradient = "linear-gradient(135deg, #3b82f6, #22d3ee)" # Bright blue to cyan
-    plotly_template = "plotly_dark"
-    
-    # Enhanced glassmorphism properties
     bg_style = "radial-gradient(at 0% 0%, rgba(15, 23, 42, 0.95) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(30, 27, 75, 0.45) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(8, 47, 73, 0.45) 0%, transparent 50%), #090d16"
-    sidebar_bg_style = "rgba(13, 21, 39, 0.6)"
-    card_shadow = "0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
-    input_bg = "rgba(15, 23, 42, 0.55)"
-    input_border = "rgba(255, 255, 255, 0.08)"
-    slider_track = "rgba(255, 255, 255, 0.08)"
+    sidebar_bg_style = "rgba(17, 24, 39, 0.6)"
 
 # Inject CSS custom styles
 def inject_css():
@@ -143,11 +173,35 @@ def inject_css():
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
+        :root {{
+            --primary: {primary_color};
+            --accent: {theme_vars['accent']};
+            --bg: {bg_color};
+            --card: {card_bg};
+            --sidebar: {sidebar_bg};
+            --text-primary: {text_color};
+            --text-secondary: {subtext_color};
+            --border: {border_color};
+            --hover: {hover_color};
+            --btn-gradient: {accent_gradient};
+            --btn-shadow: {btn_shadow};
+            --card-shadow: {card_shadow};
+            --card-blur: {card_blur};
+            --success: {success_color};
+            --danger: {danger_color};
+            --warning: {warning_color};
+        }}
+        
+        /* Smooth transition globally */
+        * {{
+            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+        }}
+        
         .stApp {{
             background: {bg_style};
             background-size: cover;
             background-attachment: fixed;
-            color: {text_color};
+            color: var(--text-primary);
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }}
         
@@ -155,7 +209,7 @@ def inject_css():
         .pulse-dot {{
             width: 8px;
             height: 8px;
-            background-color: #10b981;
+            background-color: var(--success);
             border-radius: 50%;
             display: inline-block;
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
@@ -393,14 +447,14 @@ def inject_css():
         }}
         
         .progress-bar-fill-positive {{
-            background: linear-gradient(90deg, #10b981, #34d399);
+            background: linear-gradient(90deg, var(--success), #34d399);
             height: 100%;
             border-radius: 20px;
             animation: progressGlow 1.5s ease-out;
         }}
         
         .progress-bar-fill-negative {{
-            background: linear-gradient(90deg, #ef4444, #f87171);
+            background: linear-gradient(90deg, var(--danger), #f87171);
             height: 100%;
             border-radius: 20px;
             animation: progressGlow 1.5s ease-out;
@@ -408,6 +462,29 @@ def inject_css():
         
         @keyframes progressGlow {{
             from {{ width: 0%; }}
+        }}
+        
+        
+        /* Native Expanders, Tabs, and Containers overrides */
+        div[data-testid="stExpander"] {{
+            background-color: var(--card) !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 16px !important;
+            box-shadow: var(--card-shadow) !important;
+        }}
+        
+        button[data-baseweb="tab"] {{
+            color: var(--text-secondary) !important;
+            border-bottom-color: transparent !important;
+            font-weight: 500 !important;
+        }}
+        button[data-baseweb="tab"]:hover {{
+            color: var(--primary) !important;
+        }}
+        button[aria-selected="true"] {{
+            color: var(--primary) !important;
+            border-bottom-color: var(--primary) !important;
+            font-weight: 700 !important;
         }}
         
         /* Timeline styling */
@@ -714,7 +791,7 @@ if page == "🏠 Dashboard":
                 </linearGradient>
                 <linearGradient id="shieldGrad" x1="375" y1="35" x2="425" y2="125" gradientUnits="userSpaceOnUse">
                     <stop stop-color="{primary_color}"/>
-                    <stop offset="1" stop-color="#06b6d4"/>
+                    <stop offset="1" stop-color="{theme_vars['accent']}"/>
                 </linearGradient>
             </defs>
             <rect width="800" height="160" rx="20" fill="url(#bgGrad)" stroke="{border_color}" stroke-width="1.5"/>
@@ -729,7 +806,7 @@ if page == "🏠 Dashboard":
             <circle cx="290" cy="125" r="4" fill="#a8a29e" />
             <circle cx="600" cy="40" r="4" fill="#a8a29e" />
             <circle cx="600" cy="120" r="4" fill="#a8a29e" />
-            <circle cx="550" cy="80" r="5" fill="#06b6d4" />
+            <circle cx="550" cy="80" r="5" fill="{theme_vars['accent']}" />
             <circle cx="510" cy="35" r="4" fill="#a8a29e" />
             <circle cx="510" cy="125" r="4" fill="#a8a29e" />
             
@@ -739,7 +816,7 @@ if page == "🏠 Dashboard":
             </g>
             
             <text x="110" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="28" fill="{primary_color}" opacity="0.8">f(x)</text>
-            <text x="660" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="28" fill="#06b6d4" opacity="0.8">0 / 1</text>
+            <text x="660" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="28" fill="{theme_vars['accent']}" opacity="0.8">0 / 1</text>
         </svg>
     </div>
     """, unsafe_allow_html=True)
@@ -791,7 +868,7 @@ if page == "🏠 Dashboard":
                 </div>
                 <div style="font-size: 0.8rem; color: {subtext_color};">Active state check</div>
             </div>
-            <div class="stat-value" style="color: #10b981;">Ready</div>
+            <div class="stat-value" style="color: var(--success);">Ready</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -868,7 +945,7 @@ elif page == "🤖 Prediction":
         st.markdown("<br>", unsafe_allow_html=True)
         
         # Real-Time Simulator Dashboard (instantly updating)
-        sim_color = "#10b981" if prediction == 1 else "#ef4444"
+        sim_color = success_color if prediction == 1 else danger_color
         st.markdown(f"""
         <div class="glass-card" style="border-left: 5px solid {sim_color};">
             <h4 style="margin-top: 0; margin-bottom: 0.5rem; font-size: 1rem; color: {subtext_color}; text-transform: uppercase; letter-spacing: 0.05em;">📡 Live Simulator Feed</h4>
@@ -932,26 +1009,26 @@ elif page == "🤖 Prediction":
             if last_pred['label'] == "Likely to Buy Insurance":
                 st.markdown(f"""
                 <div class="result-box-positive">
-                    <h3 style="color: #10b981; margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 800;">🟢 Likely to Buy Insurance</h3>
+                    <h3 style="color: var(--success); margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 800;">🟢 Likely to Buy Insurance</h3>
                     <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: {text_color};">
                         The model classifies a customer aged <b>{last_pred['age']}</b> as a prospective buyer.
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
-                gauge_color = "#10b981"
+                gauge_color = success_color
             else:
                 st.markdown(f"""
                 <div class="result-box-negative">
-                    <h3 style="color: #ef4444; margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 800;">🔴 Not Likely to Buy Insurance</h3>
+                    <h3 style="color: var(--danger); margin: 0 0 0.5rem 0; font-size: 1.35rem; font-weight: 800;">🔴 Not Likely to Buy Insurance</h3>
                     <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: {text_color};">
                         The model classifies a customer aged <b>{last_pred['age']}</b> as unlikely to purchase.
                     </p>
                 </div>
                 """, unsafe_allow_html=True)
-                gauge_color = "#ef4444"
+                gauge_color = danger_color
                 
             # Confidence circular gauge and probabilities
-            text_color_hex = "#0f172a" if st.session_state['theme'] == 'Light' else "#f8fafc"
+            text_color_hex = text_color
             border_color_hex = "#e2e8f0" if st.session_state['theme'] == 'Light' else "#1f2937"
             
             c_gauge, c_details = st.columns([1, 1])
@@ -1089,7 +1166,7 @@ elif page == "📊 Dataset Explorer":
             <h4 style="margin-top: 0; font-size: 1rem;">⚙️ Dataset Quality Index</h4>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid {border_color}; padding: 0.5rem 0;">
                 <span style="font-size: 0.85rem;">Missing Feature Values</span>
-                <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0.00% (None)</span>
+                <span style="background: var(--hover); color: var(--success); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0.00% (None)</span>
             </div>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid {border_color}; padding: 0.5rem 0;">
                 <span style="font-size: 0.85rem;">Duplicate Samples</span>
@@ -1138,12 +1215,19 @@ elif page == "📊 Dataset Explorer":
             color="bought_insurance",
             nbins=10,
             labels={"age": "Age (Years)", "count": "Frequency", "bought_insurance": "Bought Status"},
-            color_discrete_map={0: "#ef4444", 1: "#10b981"},
+            color_discrete_map={0: danger_color, 1: success_color},
             title="Customer Age Distribution",
             barmode="overlay",
             template=plotly_template
         )
-        fig_hist.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_hist.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", 
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color=text_color,
+            xaxis=dict(gridcolor=grid_col, color=text_color),
+            yaxis=dict(gridcolor=grid_col, color=text_color),
+            legend=dict(font=dict(color=text_color))
+        )
         st.plotly_chart(fig_hist, use_container_width=True)
         
     with col_chart2:
@@ -1154,11 +1238,16 @@ elif page == "📊 Dataset Explorer":
             df_pie,
             names="bought_insurance",
             color="bought_insurance",
-            color_discrete_map={"Will NOT Buy (0)": "#ef4444", "Likely to Buy (1)": "#10b981"},
+            color_discrete_map={"Will NOT Buy (0)": danger_color, "Likely to Buy (1)": success_color},
             title="Classification Target Balance",
             template=plotly_template
         )
-        fig_pie.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)")
+        fig_pie.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", 
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color=text_color,
+            legend=dict(font=dict(color=text_color))
+        )
         st.plotly_chart(fig_pie, use_container_width=True)
         
     # Correlation Matrix heatmap
@@ -1171,7 +1260,14 @@ elif page == "📊 Dataset Explorer":
         title="Feature Space Correlation Density",
         template=plotly_template
     )
-    fig_corr.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=280)
+    fig_corr.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)", 
+        plot_bgcolor="rgba(0,0,0,0)", 
+        height=280,
+        font_color=text_color,
+        xaxis=dict(color=text_color),
+        yaxis=dict(color=text_color)
+    )
     st.plotly_chart(fig_corr, use_container_width=True)
 
 # ==========================================
@@ -1196,7 +1292,7 @@ elif page == "📈 Visualizations":
         y=prob_range,
         mode="lines",
         name="Fitted Sigmoid Probability Curve",
-        line=dict(color="#2563eb", width=3.5),
+        line=dict(color=primary_color, width=3.5),
         hovertemplate="Age: %{x:.1f} Yrs<br>Probability: %{y:.4f}<extra></extra>"
     ))
     
@@ -1209,7 +1305,7 @@ elif page == "📈 Visualizations":
         y=no_buy_df['bought_insurance'],
         mode="markers",
         name="Actual: Unlikely to Buy (0)",
-        marker=dict(color="#ef4444", size=9, line=dict(color="white", width=1)),
+        marker=dict(color=danger_color, size=9, line=dict(color="white", width=1)),
         hovertemplate="Age: %{x} Yrs<br>Class: 0 (No)<extra></extra>"
     ))
     
@@ -1218,7 +1314,7 @@ elif page == "📈 Visualizations":
         y=buy_df['bought_insurance'],
         mode="markers",
         name="Actual: Likely to Buy (1)",
-        marker=dict(color="#10b981", size=9, line=dict(color="white", width=1)),
+        marker=dict(color=success_color, size=9, line=dict(color="white", width=1)),
         hovertemplate="Age: %{x} Yrs<br>Class: 1 (Yes)<extra></extra>"
     ))
     
@@ -1227,10 +1323,10 @@ elif page == "📈 Visualizations":
         x=decision_age,
         line_width=1.5,
         line_dash="dash",
-        line_color="#3b82f6",
+        line_color=theme_vars['accent'],
         annotation_text=f"Decision Boundary ({decision_age:.2f} yrs)",
         annotation_position="top left",
-        annotation_font=dict(color="#3b82f6", size=11)
+        annotation_font=dict(color=theme_vars['accent'], size=11)
     )
     
     # 4. Interactive user highlight coordinate
@@ -1242,11 +1338,11 @@ elif page == "📈 Visualizations":
         y=[user_prob],
         mode="markers",
         name=f"Inference Pin (Age {selected_age})",
-        marker=dict(color="#f59e0b", size=15, symbol="star", line=dict(color="white", width=1.5)),
+        marker=dict(color=warning_color, size=15, symbol="star", line=dict(color="white", width=1.5)),
         hovertemplate="Selected Age: %{x}<br>Estimated Probability: %{y:.4f}<extra></extra>"
     ))
     
-    plot_text = "#0f172a" if st.session_state['theme'] == 'Light' else "#f8fafc"
+    plot_text = text_color
     grid_col = "rgba(226, 232, 240, 0.9)" if st.session_state['theme'] == 'Light' else "rgba(255,255,255,0.06)"
     
     fig.update_layout(
@@ -1377,7 +1473,14 @@ elif page == "📉 Model Performance":
             labels=dict(color="SamplesCount"),
             template=plotly_template
         )
-        fig_cm.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=320)
+        fig_cm.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", 
+            plot_bgcolor="rgba(0,0,0,0)", 
+            height=320,
+            font_color=text_color,
+            xaxis=dict(color=text_color),
+            yaxis=dict(color=text_color)
+        )
         st.plotly_chart(fig_cm, use_container_width=True)
         
     # Second Row for ROC Curve and Model parameters
@@ -1394,16 +1497,16 @@ elif page == "📉 Model Performance":
             x=fpr, y=tpr, 
             mode='lines+markers', 
             name=f'ROC Curve (AUC = {auc_score:.2f})', 
-            line=dict(color='#2563eb', width=3.5)
+            line=dict(color=primary_color, width=3.5)
         ))
         fig_roc.add_trace(go.Scatter(
             x=[0, 1], y=[0, 1], 
             mode='lines', 
             name='Random Guess (AUC = 0.50)', 
-            line=dict(color='#ef4444', dash='dash')
+            line=dict(color=danger_color, dash='dash')
         ))
         
-        plot_text = "#0f172a" if st.session_state['theme'] == 'Light' else "#f8fafc"
+        plot_text = text_color
         grid_col = "rgba(226, 232, 240, 0.9)" if st.session_state['theme'] == 'Light' else "rgba(255,255,255,0.06)"
         
         fig_roc.update_layout(
@@ -1492,11 +1595,19 @@ elif page == "🧠 Logistic Regression":
             x="Age (Yrs)",
             y="Purchase Probability (%)",
             color="Decision Recommendation",
-            color_discrete_map={"Unlikely (0)": "#ef4444", "Likely (1)": "#10b981"},
+            color_discrete_map={"Unlikely (0)": danger_color, "Likely (1)": success_color},
             title="Comparison of Purchase Probability by Age Group",
             template=plotly_template
         )
-        fig_bar.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=300)
+        fig_bar.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", 
+            plot_bgcolor="rgba(0,0,0,0)", 
+            height=300,
+            font_color=text_color,
+            xaxis=dict(gridcolor=grid_col, color=text_color),
+            yaxis=dict(gridcolor=grid_col, color=text_color),
+            legend=dict(font=dict(color=text_color))
+        )
         st.plotly_chart(fig_bar, use_container_width=True)
         
     # Timeline

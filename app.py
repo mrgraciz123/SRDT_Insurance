@@ -614,6 +614,10 @@ def inject_css():
 
 inject_css()
 
+# Helper function to strip all leading spaces from HTML lines to prevent markdown code block triggers
+def clean_html(html_str):
+    return "\n".join(line.strip() for line in html_str.splitlines())
+
 # Helper function to generate circular gauge SVG
 def draw_svg_gauge(probability, gauge_color, text_color, border_color):
     percent = probability * 100
@@ -653,7 +657,7 @@ def draw_svg_gauge(probability, gauge_color, text_color, border_color):
         <span style="font-size: 0.65rem; font-weight: 600; color: {text_color}; opacity: 0.7; letter-spacing: 0.05em; margin-top: 2px;">PROBABILITY</span>
     </div>
 </div>"""
-    return textwrap.dedent(svg)
+    return clean_html(svg)
 
 # Helper function to generate PDF
 def generate_pdf_report(age, prediction_label, prob_buy, prob_not_buy, confidence, explanation):
@@ -801,7 +805,7 @@ if page == "🏠 Dashboard":
     """, unsafe_allow_html=True)
     
     # Beautiful SVG Banner
-    st.markdown(textwrap.dedent(f"""
+    st.markdown(clean_html(f"""
     <div style='margin-bottom: 2rem;'>
         <svg width="100%" height="160" viewBox="0 0 800 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>

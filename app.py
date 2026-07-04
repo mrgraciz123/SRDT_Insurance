@@ -1420,8 +1420,8 @@ st.markdown(f"""
     <span>Plotly</span>
     <span>Pandas</span>
     <div class="footer-socials">
-        <a href="https://github.com/abhayshankertiwari" target="_blank" title="GitHub">🐙 GitHub</a>
-        <a href="https://linkedin.com/in/abhayshankertiwari" target="_blank" title="LinkedIn">💼 LinkedIn</a>
+        <a href="https://github.com/mrgraciz123" target="_blank" title="GitHub">🐙 GitHub</a>
+        <a href="https://www.linkedin.com/in/abhay-shanker-tiwari-0a8031213/" target="_blank" title="LinkedIn">💼 LinkedIn</a>
     </div>
     <div style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.7;">
         © 2026 Abhay Shanker Tiwari. All Rights Reserved.

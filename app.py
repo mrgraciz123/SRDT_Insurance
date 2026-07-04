@@ -19,8 +19,7 @@ st.set_page_config(
 )
 
 # Initialize theme session state
-if 'theme' not in st.session_state:
-    st.session_state['theme'] = 'Light'
+st.session_state['theme'] = 'Dark'
 
 # Initialize prediction states
 if 'predicted_age' not in st.session_state:
@@ -77,11 +76,10 @@ st.sidebar.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Toggle switch for Dark Mode
-theme_toggle = st.sidebar.toggle("🌙 Dark Mode", value=(st.session_state['theme'] == 'Dark'))
-st.session_state['theme'] = 'Dark' if theme_toggle else 'Light'
+# Force Dark Mode permanently
+st.session_state['theme'] = 'Dark'
 
-st.sidebar.markdown("<hr style='border-top: 1px solid rgba(128,128,128,0.2); margin: 1rem 0;'>", unsafe_allow_html=True)
+st.sidebar.markdown("<hr style='border-top: 1px solid rgba(255,255,255,0.1); margin: 1rem 0;'>", unsafe_allow_html=True)
 
 # Sidebar navigation
 page = st.sidebar.radio(
@@ -97,55 +95,30 @@ page = st.sidebar.radio(
     ]
 )
 
-# Centralized theme configuration with variables instead of hardcoded colors
-if st.session_state['theme'] == 'Light':
-    theme_vars = {
-        "primary": "#2563EB",
-        "accent": "#3B82F6",
-        "bg": "#F8FAFC",
-        "card": "#FFFFFF",
-        "sidebar": "#FFFFFF",
-        "text_primary": "#111827",
-        "text_secondary": "#6B7280",
-        "border": "#E5E7EB",
-        "hover": "#F3F4F6",
-        "btn_gradient": "linear-gradient(135deg, #2563EB, #3B82F6)",
-        "btn_shadow": "rgba(37, 99, 235, 0.15)",
-        "card_shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03)",
-        "card_blur": "blur(0px)",
-        "plotly_template": "plotly_white",
-        "grid_color": "#F3F4F6",
-        "success": "#10B981",
-        "danger": "#EF4444",
-        "warning": "#F59E0B",
-        "input_bg": "rgba(255, 255, 255, 0.65)",
-        "input_border": "rgba(226, 232, 240, 0.9)",
-        "slider_track": "rgba(226, 232, 240, 0.8)"
-    }
-else:
-    theme_vars = {
-        "primary": "#60A5FA",
-        "accent": "#3B82F6",
-        "bg": "#0F172A",
-        "card": "rgba(30, 41, 59, 0.75)", # Glassmorphic dark card
-        "sidebar": "#111827",
-        "text_primary": "#F8FAFC",
-        "text_secondary": "#CBD5E1",
-        "border": "#334155",
-        "hover": "#273549",
-        "btn_gradient": "linear-gradient(135deg, #3B82F6, #60A5FA)",
-        "btn_shadow": "rgba(96, 165, 250, 0.25)",
-        "card_shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2)",
-        "card_blur": "blur(12px)",
-        "plotly_template": "plotly_dark",
-        "grid_color": "#1E293B",
-        "success": "#34D399",
-        "danger": "#F87171",
-        "warning": "#FBBF24",
-        "input_bg": "rgba(15, 23, 42, 0.55)",
-        "input_border": "rgba(255, 255, 255, 0.08)",
-        "slider_track": "rgba(255, 255, 255, 0.08)"
-    }
+# Centralized theme configuration (Forced Dark Theme)
+theme_vars = {
+    "primary": "#60A5FA",
+    "accent": "#3B82F6",
+    "bg": "#0F172A",
+    "card": "rgba(30, 41, 59, 0.75)", # Glassmorphic dark card
+    "sidebar": "#111827",
+    "text_primary": "#F8FAFC",
+    "text_secondary": "#CBD5E1",
+    "border": "#334155",
+    "hover": "#273549",
+    "btn_gradient": "linear-gradient(135deg, #3B82F6, #60A5FA)",
+    "btn_shadow": "rgba(96, 165, 250, 0.25)",
+    "card_shadow": "0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.2)",
+    "card_blur": "blur(12px)",
+    "plotly_template": "plotly_dark",
+    "grid_color": "#1E293B",
+    "success": "#34D399",
+    "danger": "#F87171",
+    "warning": "#FBBF24",
+    "input_bg": "rgba(15, 23, 42, 0.55)",
+    "input_border": "rgba(255, 255, 255, 0.08)",
+    "slider_track": "rgba(255, 255, 255, 0.08)"
+}
 
 # Mapping global variables
 primary_color = theme_vars['primary']
@@ -169,12 +142,8 @@ input_bg = theme_vars['input_bg']
 input_border = theme_vars['input_border']
 slider_track = theme_vars['slider_track']
 
-if st.session_state['theme'] == 'Light':
-    bg_style = "radial-gradient(at 0% 0%, rgba(244, 247, 254, 1) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(224, 231, 255, 0.6) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(207, 250, 254, 0.5) 0%, transparent 50%), #f8fafc"
-    sidebar_bg_style = "rgba(255, 255, 255, 0.45)"
-else:
-    bg_style = "radial-gradient(at 0% 0%, rgba(15, 23, 42, 0.95) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(30, 27, 75, 0.45) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(8, 47, 73, 0.45) 0%, transparent 50%), #090d16"
-    sidebar_bg_style = "rgba(17, 24, 39, 0.6)"
+bg_style = "radial-gradient(at 0% 0%, rgba(15, 23, 42, 0.95) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(30, 27, 75, 0.45) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(8, 47, 73, 0.45) 0%, transparent 50%), #090d16"
+sidebar_bg_style = "rgba(17, 24, 39, 0.6)"
 
 # Inject CSS custom styles
 def inject_css():
@@ -1081,7 +1050,7 @@ elif page == "🤖 Prediction":
                 
             # Confidence circular gauge and probabilities
             text_color_hex = text_color
-            border_color_hex = "#e2e8f0" if st.session_state['theme'] == 'Light' else "#1f2937"
+            border_color_hex = "#1f2937"
             
             c_gauge, c_details = st.columns([1, 1])
             with c_gauge:
@@ -1395,7 +1364,7 @@ elif page == "📈 Visualizations":
     ))
     
     plot_text = text_color
-    grid_col = "rgba(226, 232, 240, 0.9)" if st.session_state['theme'] == 'Light' else "rgba(255,255,255,0.06)"
+    grid_col = "rgba(255,255,255,0.06)"
     
     fig.update_layout(
         title=dict(
@@ -1559,7 +1528,7 @@ elif page == "📉 Model Performance":
         ))
         
         plot_text = text_color
-        grid_col = "rgba(226, 232, 240, 0.9)" if st.session_state['theme'] == 'Light' else "rgba(255,255,255,0.06)"
+        grid_col = "rgba(255,255,255,0.06)"
         
         fig_roc.update_layout(
             title="Receiver Operating Characteristic (ROC)",

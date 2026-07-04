@@ -1,3 +1,4 @@
+import textwrap
 import streamlit as st
 import pandas as pd
 import numpy as np
@@ -622,39 +623,37 @@ def draw_svg_gauge(probability, gauge_color, text_color, border_color):
     circumference = 2 * math.pi * radius
     stroke_dashoffset = circumference - (probability * circumference)
     
-    svg = f"""
-    <div style="position: relative; display: flex; justify-content: center; align-items: center; height: 130px; margin-top: 0.5rem;">
-        <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}" style="transform: rotate(-90deg);">
-            <!-- Background circle -->
-            <circle 
-                cx="{center}" 
-                cy="{center}" 
-                r="{radius}" 
-                fill="none" 
-                stroke="{border_color}" 
-                stroke-width="8"
-            />
-            <!-- Progress circle -->
-            <circle 
-                cx="{center}" 
-                cy="{center}" 
-                r="{radius}" 
-                fill="none" 
-                stroke="{gauge_color}" 
-                stroke-width="8"
-                stroke-dasharray="{circumference}"
-                stroke-dashoffset="{stroke_dashoffset}"
-                stroke-linecap="round"
-                style="transition: stroke-dashoffset 0.5s ease-in-out;"
-            />
-        </svg>
-        <div style="position: absolute; text-align: center; color: {text_color}; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-            <span style="font-size: 1.4rem; font-weight: 800; color: {text_color}; line-height: 1.1;">{percent:.1f}%</span>
-            <span style="font-size: 0.65rem; font-weight: 600; color: {text_color}; opacity: 0.7; letter-spacing: 0.05em; margin-top: 2px;">PROBABILITY</span>
-        </div>
+    svg = f"""<div style="position: relative; display: flex; justify-content: center; align-items: center; height: 130px; margin-top: 0.5rem;">
+    <svg width="{size}" height="{size}" viewBox="0 0 {size} {size}" style="transform: rotate(-90deg);" xmlns="http://www.w3.org/2000/svg">
+        <!-- Background circle -->
+        <circle 
+            cx="{center}" 
+            cy="{center}" 
+            r="{radius}" 
+            fill="none" 
+            stroke="{border_color}" 
+            stroke-width="8"
+        />
+        <!-- Progress circle -->
+        <circle 
+            cx="{center}" 
+            cy="{center}" 
+            r="{radius}" 
+            fill="none" 
+            stroke="{gauge_color}" 
+            stroke-width="8"
+            stroke-dasharray="{circumference}"
+            stroke-dashoffset="{stroke_dashoffset}"
+            stroke-linecap="round"
+            style="transition: stroke-dashoffset 0.5s ease-in-out;"
+        />
+    </svg>
+    <div style="position: absolute; text-align: center; color: {text_color}; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <span style="font-size: 1.4rem; font-weight: 800; color: {text_color}; line-height: 1.1;">{percent:.1f}%</span>
+        <span style="font-size: 0.65rem; font-weight: 600; color: {text_color}; opacity: 0.7; letter-spacing: 0.05em; margin-top: 2px;">PROBABILITY</span>
     </div>
-    """
-    return svg
+</div>"""
+    return textwrap.dedent(svg)
 
 # Helper function to generate PDF
 def generate_pdf_report(age, prediction_label, prob_buy, prob_not_buy, confidence, explanation):
@@ -802,7 +801,7 @@ if page == "🏠 Dashboard":
     """, unsafe_allow_html=True)
     
     # Beautiful SVG Banner
-    st.markdown(f"""
+    st.markdown(textwrap.dedent(f"""
     <div style='margin-bottom: 2rem;'>
         <svg width="100%" height="160" viewBox="0 0 800 160" fill="none" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -840,7 +839,7 @@ if page == "🏠 Dashboard":
             <text x="660" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="28" fill="{theme_vars['accent']}" opacity="0.8">0 / 1</text>
         </svg>
     </div>
-    """, unsafe_allow_html=True)
+    """), unsafe_allow_html=True)
     
     st.markdown("### 📊 Platform Metrics Overview", unsafe_allow_html=True)
     

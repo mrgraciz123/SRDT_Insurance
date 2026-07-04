@@ -100,26 +100,42 @@ page = st.sidebar.radio(
 # Set CSS theme variables based on state
 if st.session_state['theme'] == 'Light':
     bg_color = "#f8fafc"
-    card_bg = "rgba(255, 255, 255, 0.75)"
+    card_bg = "rgba(255, 255, 255, 0.72)"
     text_color = "#0f172a"
     subtext_color = "#475569"
-    border_color = "rgba(226, 232, 240, 0.9)"
-    shadow_color = "rgba(31, 38, 135, 0.04)"
+    border_color = "rgba(255, 255, 255, 0.6)"
+    shadow_color = "rgba(31, 38, 135, 0.05)"
     sidebar_bg = "#ffffff"
     primary_color = "#2563eb" # Royal Blue
     accent_gradient = "linear-gradient(135deg, #2563eb, #06b6d4)" # Royal Blue to Cyan Gradient
     plotly_template = "plotly_white"
+    
+    # Enhanced glassmorphism properties
+    bg_style = "radial-gradient(at 0% 0%, rgba(244, 247, 254, 1) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(224, 231, 255, 0.6) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(207, 250, 254, 0.5) 0%, transparent 50%), #f8fafc"
+    sidebar_bg_style = "rgba(255, 255, 255, 0.45)"
+    card_shadow = "0 8px 32px 0 rgba(31, 38, 135, 0.06), inset 0 1px 0 0 rgba(255, 255, 255, 0.6)"
+    input_bg = "rgba(255, 255, 255, 0.65)"
+    input_border = "rgba(226, 232, 240, 0.9)"
+    slider_track = "rgba(226, 232, 240, 0.8)"
 else:
     bg_color = "#090d16"
-    card_bg = "rgba(15, 23, 42, 0.75)"
+    card_bg = "rgba(15, 23, 42, 0.65)"
     text_color = "#f8fafc"
     subtext_color = "#94a3b8"
-    border_color = "rgba(255, 255, 255, 0.06)"
+    border_color = "rgba(255, 255, 255, 0.08)"
     shadow_color = "rgba(0, 0, 0, 0.4)"
     sidebar_bg = "#0d1527"
     primary_color = "#3b82f6" # Brighter Blue
     accent_gradient = "linear-gradient(135deg, #3b82f6, #22d3ee)" # Bright blue to cyan
     plotly_template = "plotly_dark"
+    
+    # Enhanced glassmorphism properties
+    bg_style = "radial-gradient(at 0% 0%, rgba(15, 23, 42, 0.95) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(30, 27, 75, 0.45) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(8, 47, 73, 0.45) 0%, transparent 50%), #090d16"
+    sidebar_bg_style = "rgba(13, 21, 39, 0.6)"
+    card_shadow = "0 8px 32px 0 rgba(0, 0, 0, 0.37), inset 0 1px 0 0 rgba(255, 255, 255, 0.05)"
+    input_bg = "rgba(15, 23, 42, 0.55)"
+    input_border = "rgba(255, 255, 255, 0.08)"
+    slider_track = "rgba(255, 255, 255, 0.08)"
 
 # Inject CSS custom styles
 def inject_css():
@@ -128,7 +144,9 @@ def inject_css():
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
         
         .stApp {{
-            background-color: {bg_color};
+            background: {bg_style};
+            background-size: cover;
+            background-attachment: fixed;
             color: {text_color};
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }}
@@ -137,22 +155,25 @@ def inject_css():
         footer {{visibility: hidden;}}
         header {{visibility: hidden;}}
         
+        /* Glassmorphic Sidebar */
         [data-testid="stSidebar"] {{
-            background-color: {sidebar_bg} !important;
-            border-right: 1px solid {border_color};
+            background: {sidebar_bg_style} !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border-right: 1px solid {border_color} !important;
             padding-top: 1.5rem;
         }}
         
         /* Glassmorphism custom card panel */
         .glass-card {{
             background: {card_bg};
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid {border_color};
             border-radius: 16px;
             padding: 1.5rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 8px 32px 0 {shadow_color};
+            box-shadow: {card_shadow};
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }}
         
@@ -165,13 +186,15 @@ def inject_css():
         /* Hero Section style */
         .hero-card {{
             background: linear-gradient(135deg, {primary_color}12, {primary_color}03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid {border_color};
             border-radius: 24px;
             padding: 3rem 2rem;
             margin-bottom: 2rem;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px -5px {shadow_color};
+            box-shadow: {card_shadow};
         }}
         
         .hero-title {{
@@ -205,10 +228,11 @@ def inject_css():
         .stat-card {{
             background: {card_bg};
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid {border_color};
             border-radius: 16px;
             padding: 1.5rem;
-            box-shadow: 0 4px 20px {shadow_color};
+            box-shadow: {card_shadow};
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             flex-direction: column;
@@ -236,9 +260,51 @@ def inject_css():
             color: {subtext_color};
         }}
         
-        /* Input & Controls decoration */
-        .stSlider, .stNumberInput {{
-            margin-bottom: 1rem;
+        /* Input & Controls glassmorphism styling */
+        div[data-baseweb="input"] {{
+            background-color: {input_bg} !important;
+            border: 1px solid {input_border} !important;
+            border-radius: 12px !important;
+            color: {text_color} !important;
+        }}
+        
+        div[data-baseweb="input"]:focus-within {{
+            border-color: {primary_color} !important;
+            box-shadow: 0 0 0 3px {primary_color}22 !important;
+        }}
+        
+        div[data-baseweb="select"] {{
+            background-color: {input_bg} !important;
+            border: 1px solid {input_border} !important;
+            border-radius: 12px !important;
+            color: {text_color} !important;
+        }}
+        
+        /* Interactive Slider styling */
+        div[data-testid="stSlider"] div[data-baseweb="slider"] > div {{
+            background-color: {slider_track} !important;
+        }}
+        
+        div[role="slider"] {{
+            background-color: {primary_color} !important;
+            border: 2px solid white !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15) !important;
+        }}
+        
+        /* Select list dropdown hover */
+        div[role="listbox"] {{
+            background-color: {sidebar_bg} !important;
+            color: {text_color} !important;
+            border: 1px solid {border_color} !important;
+        }}
+        
+        /* Table / DataFrame style mapping */
+        div[data-testid="stDataFrame"] {{
+            background-color: {card_bg} !important;
+            border: 1px solid {border_color} !important;
+            border-radius: 16px !important;
+            padding: 0.5rem;
+            box-shadow: {card_shadow};
         }}
         
         /* Gradient Predict buttons */
@@ -418,6 +484,22 @@ def inject_css():
             background: {primary_color}0c;
             border-color: {primary_color};
             transform: translateY(-2px);
+        }}
+        
+        /* Fade in effect for page content */
+        [data-testid="stAppViewBlockContainer"] {{
+            animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }}
+        
+        @keyframes fadeIn {{
+            from {{
+                opacity: 0;
+                transform: translateY(8px);
+            }}
+            to {{
+                opacity: 1;
+                transform: translateY(0);
+            }}
         }}
         
         /* Footer */

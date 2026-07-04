@@ -117,7 +117,10 @@ if st.session_state['theme'] == 'Light':
         "grid_color": "#F3F4F6",
         "success": "#10B981",
         "danger": "#EF4444",
-        "warning": "#F59E0B"
+        "warning": "#F59E0B",
+        "input_bg": "rgba(255, 255, 255, 0.65)",
+        "input_border": "rgba(226, 232, 240, 0.9)",
+        "slider_track": "rgba(226, 232, 240, 0.8)"
     }
 else:
     theme_vars = {
@@ -138,7 +141,10 @@ else:
         "grid_color": "#1E293B",
         "success": "#34D399",
         "danger": "#F87171",
-        "warning": "#FBBF24"
+        "warning": "#FBBF24",
+        "input_bg": "rgba(15, 23, 42, 0.55)",
+        "input_border": "rgba(255, 255, 255, 0.08)",
+        "slider_track": "rgba(255, 255, 255, 0.08)"
     }
 
 # Mapping global variables
@@ -159,6 +165,9 @@ btn_shadow = theme_vars['btn_shadow']
 card_shadow = theme_vars['card_shadow']
 card_blur = theme_vars['card_blur']
 grid_col = theme_vars['grid_color']
+input_bg = theme_vars['input_bg']
+input_border = theme_vars['input_border']
+slider_track = theme_vars['slider_track']
 
 if st.session_state['theme'] == 'Light':
     bg_style = "radial-gradient(at 0% 0%, rgba(244, 247, 254, 1) 0%, transparent 50%), radial-gradient(at 50% 0%, rgba(224, 231, 255, 0.6) 0%, transparent 50%), radial-gradient(at 100% 0%, rgba(207, 250, 254, 0.5) 0%, transparent 50%), #f8fafc"

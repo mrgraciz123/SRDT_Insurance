@@ -5,7 +5,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_score, recall_score, f1_score
+from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_score, recall_score, f1_score, roc_curve, roc_auc_score
 import math
 import datetime
 import io
@@ -149,6 +149,23 @@ def inject_css():
             background-attachment: fixed;
             color: {text_color};
             font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }}
+        
+        /* pulsing active indicator dot */
+        .pulse-dot {{
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            animation: pulse 1.6s infinite cubic-bezier(0.66, 0, 0, 1);
+        }}
+        
+        @keyframes pulse {{
+            to {{
+                box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+            }}
         }}
         
         #MainMenu {{visibility: hidden;}}
@@ -732,33 +749,49 @@ if page == "🏠 Dashboard":
     # Interactive / Animated Statistic Cards
     st.markdown(f"""
     <div class="stats-grid">
-        <div class="stat-card">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(37, 99, 235, 0.08), rgba(6, 182, 212, 0.03));">
             <div>
                 <div class="stat-label">📁 Dataset Size</div>
                 <div style="font-size: 0.8rem; color: {subtext_color};">Total clients in registry</div>
             </div>
             <div class="stat-value">27 Samples</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(52, 211, 153, 0.03));">
             <div>
                 <div class="stat-label">🎯 Training Accuracy</div>
                 <div style="font-size: 0.8rem; color: {subtext_color};">Model training score</div>
             </div>
             <div class="stat-value">{train_acc * 100:.1f}%</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(167, 139, 250, 0.03));">
             <div>
                 <div class="stat-label">🤖 Algorithm</div>
                 <div style="font-size: 0.8rem; color: {subtext_color};">Model architecture type</div>
             </div>
-            <div class="stat-value">Logistic Regression</div>
+            <div class="stat-value" style="font-size: 1.6rem; margin-top: 0.5rem;">Logistic Regression</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.03));">
             <div>
                 <div class="stat-label">⚙️ Problem Type</div>
                 <div style="font-size: 0.8rem; color: {subtext_color};">Classification classes</div>
             </div>
             <div class="stat-value">Binary (0 / 1)</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(244, 114, 182, 0.03));">
+            <div>
+                <div class="stat-label">🔮 Prediction Count</div>
+                <div style="font-size: 0.8rem; color: {subtext_color};">Runs logged in session</div>
+            </div>
+            <div class="stat-value">{len(st.session_state['prediction_history'])}</div>
+        </div>
+        <div class="stat-card" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(34, 211, 238, 0.03));">
+            <div>
+                <div class="stat-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                    🟢 <span class="pulse-dot"></span> Model Status
+                </div>
+                <div style="font-size: 0.8rem; color: {subtext_color};">Active state check</div>
+            </div>
+            <div class="stat-value" style="color: #10b981;">Ready</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1050,12 +1083,17 @@ elif page == "📊 Dataset Explorer":
         st.dataframe(df, use_container_width=True, height=280)
         
         # Quality check badges
+        dup_rows = df.duplicated().sum()
         st.markdown(f"""
         <div class="glass-card" style="margin-top: 1rem;">
             <h4 style="margin-top: 0; font-size: 1rem;">⚙️ Dataset Quality Index</h4>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid {border_color}; padding: 0.5rem 0;">
                 <span style="font-size: 0.85rem;">Missing Feature Values</span>
                 <span style="background: rgba(16, 185, 129, 0.15); color: #10b981; padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 700; font-size: 0.75rem;">0.00% (None)</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid {border_color}; padding: 0.5rem 0;">
+                <span style="font-size: 0.85rem;">Duplicate Samples</span>
+                <span style="color: {primary_color}; font-weight: 700; font-size: 0.85rem;">{dup_rows} Rows</span>
             </div>
             <div style="display: flex; justify-content: space-between; border-bottom: 1px solid {border_color}; padding: 0.5rem 0;">
                 <span style="font-size: 0.85rem;">Feature Columns Count</span>
@@ -1341,6 +1379,61 @@ elif page == "📉 Model Performance":
         )
         fig_cm.update_layout(paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)", height=320)
         st.plotly_chart(fig_cm, use_container_width=True)
+        
+    # Second Row for ROC Curve and Model parameters
+    st.markdown("### 📈 ROC Curve & Model Parameters")
+    col_perf3, col_perf4 = st.columns(2)
+    with col_perf3:
+        # ROC curve calculation
+        y_test_prob = model.predict_proba(X_test)[:, 1]
+        fpr, tpr, thresholds_roc = roc_curve(y_test, y_test_prob)
+        auc_score = roc_auc_score(y_test, y_test_prob)
+        
+        fig_roc = go.Figure()
+        fig_roc.add_trace(go.Scatter(
+            x=fpr, y=tpr, 
+            mode='lines+markers', 
+            name=f'ROC Curve (AUC = {auc_score:.2f})', 
+            line=dict(color='#2563eb', width=3.5)
+        ))
+        fig_roc.add_trace(go.Scatter(
+            x=[0, 1], y=[0, 1], 
+            mode='lines', 
+            name='Random Guess (AUC = 0.50)', 
+            line=dict(color='#ef4444', dash='dash')
+        ))
+        
+        plot_text = "#0f172a" if st.session_state['theme'] == 'Light' else "#f8fafc"
+        grid_col = "rgba(226, 232, 240, 0.9)" if st.session_state['theme'] == 'Light' else "rgba(255,255,255,0.06)"
+        
+        fig_roc.update_layout(
+            title="Receiver Operating Characteristic (ROC)",
+            xaxis_title="False Positive Rate",
+            yaxis_title="True Positive Rate",
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font_color=plot_text,
+            xaxis=dict(gridcolor=grid_col, color=plot_text),
+            yaxis=dict(gridcolor=grid_col, color=plot_text),
+            height=320,
+            margin=dict(l=40, r=40, t=40, b=40)
+        )
+        st.plotly_chart(fig_roc, use_container_width=True)
+    with col_perf4:
+        st.markdown(f"""
+        <div class="glass-card">
+            <h4 style="margin-top:0;">⚙️ Model Equation Parameters</h4>
+            <div style="font-size: 0.9rem; color: {subtext_color}; line-height: 1.6;">
+                • <b>Bias (Intercept, beta_0):</b> {intercept:.6f}<br>
+                • <b>Age Slope (Coefficient, beta_1):</b> {coef:.6f}<br>
+                • <b>Decision Boundary Threshold Age:</b> {decision_age:.2f} Years<br>
+                • <b>Classification Decision Threshold:</b> 0.50 (50.0%)
+            </div>
+            <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid {border_color}; font-size: 0.85rem;">
+                The ROC Curve measures the model's true positive rate against the false positive rate across different decision thresholds. An AUC of 1.00 indicates perfect classification accuracy on the hold-out testing set.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ==========================================
 # 🧠 LOGISTIC REGRESSION (MATH & BUSINESS INSIGHTS)
@@ -1444,6 +1537,7 @@ elif page == "🧠 Logistic Regression":
     st.markdown("### 💼 Automated Business Insights")
     min_buy_age = df[df['bought_insurance'] == 1]['age'].min()
     max_no_buy_age = df[df['bought_insurance'] == 0]['age'].max()
+    avg_buy_age = df[df['bought_insurance'] == 1]['age'].mean()
     
     st.markdown(f"""
     <div class="glass-card">
@@ -1452,6 +1546,7 @@ elif page == "🧠 Logistic Regression":
             <li>🛡️ <b>Initial Conversion Milestone:</b> The youngest customer who purchased life insurance in our database was <b>{min_buy_age} years old</b>.</li>
             <li>📈 <b>Critical Decision Junction:</b> Purchase likelihood increases significantly above the decision boundary of <b>{decision_age:.2f} years old</b>. The probability spikes past 50% at this point.</li>
             <li>👥 <b>Low conversion demographic:</b> Younger prospects (under age {max_no_buy_age}) exhibit historical purchase apathy. The oldest customer who chose not to buy insurance was <b>{max_no_buy_age} years old</b>.</li>
+            <li>📊 <b>Average Purchase Age:</b> The average age of historical buyers is <b>{avg_buy_age:.1f} years old</b>.</li>
         </ul>
     </div>
     """, unsafe_allow_html=True)
